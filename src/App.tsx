@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { CheckIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { cn } from './utils/cn';
-import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from './store';
+import { completeTodo, createTodo, deleteTodo, readTodos } from './store/todos/thunks';
+import { cn } from './utils/cn';
 
 export function App() {
   const dispatch = useAppDispatch();
@@ -14,17 +15,22 @@ export function App() {
 
     if (!inputValue.trim()) return;
 
-    dispatch({ type: 'ADD_TODO', payload: { text: inputValue } });
+    dispatch(createTodo(inputValue));
     setInputValue('');
   };
 
-  const handleComplete = (id: string) => {
-    dispatch({ type: 'COMPLETE_TODO', payload: { id } });
+  const handleComplete = ({ id, isCompleted }: { id: string; isCompleted: boolean }) => {
+    dispatch(completeTodo({ id, isCompleted }));
   };
 
   const handleDelete = (id: string) => {
-    dispatch({ type: 'DELETE_TODO', payload: { id } });
+    dispatch(deleteTodo(id));
   };
+
+  useEffect(() => {
+    dispatch(readTodos());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
@@ -61,7 +67,7 @@ export function App() {
               </span>
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => handleComplete(todo.id)}
+                  onClick={() => handleComplete({ id: todo.id, isCompleted: todo.isCompleted })}
                   className={cn(
                     'rounded-full p-2 text-white focus:outline-none focus:ring',
                     !todo.isCompleted

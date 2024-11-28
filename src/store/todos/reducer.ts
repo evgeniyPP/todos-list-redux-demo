@@ -3,19 +3,19 @@ import { type TodoActionTypes } from './actions';
 
 export function todosReducer(state: Todo[] = [], action: TodoActionTypes): Todo[] {
   switch (action.type) {
+    case 'SET_TODOS':
+      return action.payload.todos;
+
     case 'ADD_TODO':
-      return [
-        ...state,
-        { id: Date.now().toString(), text: action.payload.text, isCompleted: false },
-      ];
+      return [...state, action.payload.newTodo];
 
     case 'COMPLETE_TODO':
       return state.map(todo =>
-        todo.id === action.payload.id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+        todo.id === action.payload.completedTodo.id ? action.payload.completedTodo : todo
       );
 
     case 'DELETE_TODO':
-      return state.filter(todo => todo.id !== action.payload.id);
+      return state.filter(todo => todo.id !== action.payload.deletedTodo.id);
 
     default:
       return state;

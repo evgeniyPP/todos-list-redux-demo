@@ -1,16 +1,27 @@
+import { type Todo } from '../../models';
+
+type SetTodosAction = {
+  type: 'SET_TODOS';
+  payload: { todos: Todo[] };
+};
+
 type AddTodoAction = {
   type: 'ADD_TODO';
-  payload: { text: string };
+  payload: { newTodo: Todo };
 };
 
 type CompleteTodoAction = {
   type: 'COMPLETE_TODO';
-  payload: { id: string };
+  payload: { completedTodo: Todo };
 };
 
 type DeleteTodoAction = {
   type: 'DELETE_TODO';
-  payload: { id: string };
+  payload: { deletedTodo: Todo };
 };
 
-export type TodoActionTypes = AddTodoAction | CompleteTodoAction | DeleteTodoAction;
+export type TodoActionTypes =
+  | SetTodosAction
+  | AddTodoAction
+  | CompleteTodoAction
+  | DeleteTodoAction;
