@@ -1,35 +1,29 @@
 import { CheckIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { cn } from './utils/cn';
 import { useState } from 'react';
-import { type Todo } from './models';
+import { useAppDispatch, useAppSelector } from './store';
 
 export function App() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTodo, setNewTodo] = useState('');
+  const dispatch = useAppDispatch();
+  const todos = useAppSelector(state => state.todos);
+
+  const [inputValue, setInputValue] = useState('');
 
   const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!newTodo.trim()) return;
+    if (!inputValue.trim()) return;
 
-    const newTodoItem: Todo = {
-      id: Date.now(),
-      text: newTodo,
-      isCompleted: false,
-    };
-
-    setTodos(prev => [newTodoItem, ...prev]);
-    setNewTodo('');
+    dispatch({ type: 'ADD_TODO', payload: { text: inputValue } });
+    setInputValue('');
   };
 
-  const handleComplete = (id: number) => {
-    setTodos(prev =>
-      prev.map(todo => (todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo))
-    );
+  const handleComplete = (id: string) => {
+    dispatch({ type: 'COMPLETE_TODO', payload: { id } });
   };
 
-  const handleDelete = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+  const handleDelete = (id: string) => {
+    dispatch({ type: 'DELETE_TODO', payload: { id } });
   };
 
   return (
@@ -39,8 +33,8 @@ export function App() {
         <form onSubmit={handleAdd} className="mb-4 flex items-center">
           <input
             type="text"
-            value={newTodo}
-            onChange={e => setNewTodo(e.target.value)}
+            value={inputValue}
+            onChange={e => setInputValue(e.target.value)}
             placeholder="Добавить задачу"
             className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring focus:ring-blue-300"
           />
