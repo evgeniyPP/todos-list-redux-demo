@@ -1,6 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { type AppDispatch } from '..';
 import { Todo } from '../../models';
-import { v4 as uuidv4 } from 'uuid';
 
 export const readTodos = () => async (dispatch: AppDispatch) => {
   try {

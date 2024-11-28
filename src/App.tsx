@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CheckIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+
 import { useAppDispatch, useAppSelector } from './store';
 import { completeTodo, createTodo, deleteTodo, readTodos } from './store/todos/thunks';
 import { cn } from './utils/cn';
