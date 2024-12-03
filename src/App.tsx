@@ -1,43 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CheckIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 
-import { useAppDispatch, useAppSelector } from './store';
-import { completeTodo, createTodo, deleteTodo, readTodos } from './store/todos/thunks';
+import {
+  useCompleteTodoMutation,
+  useCreateTodoMutation,
+  useDeleteTodoMutation,
+  useReadTodosQuery,
+} from './store/todos';
 import { cn } from './utils/cn';
 
 export function App() {
-  const dispatch = useAppDispatch();
-  const todos = useAppSelector(state => state.todos.todos);
-
   const [inputValue, setInputValue] = useState('');
 
-  const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const { data: todos = [], isLoading } = useReadTodosQuery();
 
-    if (!inputValue.trim()) return;
+  const [createTodo] = useCreateTodoMutation();
+  const [completeTodo] = useCompleteTodoMutation();
+  const [deleteTodo] = useDeleteTodoMutation();
 
-    dispatch(createTodo(inputValue));
-    setInputValue('');
-  };
-
-  const handleComplete = ({ id, isCompleted }: { id: string; isCompleted: boolean }) => {
-    dispatch(completeTodo({ id, isCompleted }));
-  };
-
-  const handleDelete = (id: string) => {
-    dispatch(deleteTodo(id));
-  };
-
-  useEffect(() => {
-    dispatch(readTodos());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if (isLoading) return null;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-xl rounded-lg bg-white p-6 shadow-lg">
         <h1 className="mb-4 text-2xl font-bold text-gray-800">Лист задач</h1>
-        <form onSubmit={handleAdd} className="mb-4 flex items-center">
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+
+            if (!inputValue.trim()) return;
+
+            createTodo(inputValue);
+            setInputValue('');
+          }}
+          className="mb-4 flex items-center"
+        >
           <input
             type="text"
             value={inputValue}
@@ -68,7 +65,7 @@ export function App() {
               </span>
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => handleComplete({ id: todo.id, isCompleted: todo.isCompleted })}
+                  onClick={() => completeTodo({ id: todo.id, isCompleted: todo.isCompleted })}
                   className={cn(
                     'rounded-full p-2 text-white focus:outline-none focus:ring',
                     !todo.isCompleted
@@ -79,7 +76,7 @@ export function App() {
                   <CheckIcon className="h-5 w-5" />
                 </button>
                 <button
-                  onClick={() => handleDelete(todo.id)}
+                  onClick={() => deleteTodo(todo.id)}
                   className="rounded-full bg-red-500 p-2 text-white hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
                 >
                   <TrashIcon className="h-5 w-5" />
