@@ -1,6 +1,7 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { type Todo } from '../../models';
+import { completeTodo, createTodo, deleteTodo, readTodos } from './thunks';
 
 export type TodosState = {
   todos: Todo[];
@@ -13,24 +14,23 @@ const initialState: TodosState = {
 export const todoSlice = createSlice({
   name: 'todo',
   initialState,
-  reducers: {
-    setTodos: (state, action: PayloadAction<{ todos: Todo[] }>) => {
-      state.todos = action.payload.todos;
-    },
-    addTodo: (state, action: PayloadAction<{ newTodo: Todo }>) => {
-      state.todos.push(action.payload.newTodo);
-    },
-    completeTodo: (state, action: PayloadAction<{ completedTodo: Todo }>) => {
-      const index = state.todos.findIndex(todo => todo.id === action.payload.completedTodo.id);
-      state.todos[index] = action.payload.completedTodo;
-    },
-    deleteTodo: (state, action: PayloadAction<{ deletedTodo: Todo }>) => {
-      const index = state.todos.findIndex(todo => todo.id === action.payload.deletedTodo.id);
-      state.todos.splice(index, 1);
-    },
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(readTodos.fulfilled, (state, { payload }) => {
+        state.todos = payload;
+      })
+      .addCase(createTodo.fulfilled, (state, { payload }) => {
+        state.todos.push(payload);
+      })
+      .addCase(completeTodo.fulfilled, (state, { payload }) => {
+        const changedIndex = state.todos.findIndex(todo => todo.id === payload.id);
+        state.todos[changedIndex] = payload;
+      })
+      .addCase(deleteTodo.fulfilled, (state, { payload }) => {
+        state.todos = state.todos.filter(todo => todo.id !== payload.id);
+      });
   },
 });
-
-export const { setTodos, addTodo, completeTodo, deleteTodo } = todoSlice.actions;
 
 export default todoSlice.reducer;

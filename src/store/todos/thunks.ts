@@ -1,70 +1,45 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-import { type AppDispatch } from '..';
-import { Todo } from '../../models';
-import {
-  addTodo,
-  completeTodo as completeTodoAction,
-  deleteTodo as deleteTodoAction,
-  setTodos,
-} from './slice';
+import { type Todo } from '../../models';
 
-export const readTodos = () => async (dispatch: AppDispatch) => {
-  try {
-    const response = await fetch('http://localhost:5001/posts');
-    const data = (await response.json()) as Todo[];
+export const readTodos = createAsyncThunk<Todo[]>('todos/readTodos', async () => {
+  const response = await fetch('http://localhost:5001/posts');
 
-    dispatch(setTodos({ todos: data }));
-  } catch (error) {
-    console.error('Ошибка при загрузке задач', error);
-  }
-};
+  return await response.json();
+});
 
-export const createTodo = (text: string) => async (dispatch: AppDispatch) => {
-  try {
-    const response = await fetch('http://localhost:5001/posts', {
-      method: 'POST',
-      body: JSON.stringify({ id: uuidv4(), text, isCompleted: false }),
+export const createTodo = createAsyncThunk<Todo, string>('todos/createTodo', async text => {
+  const response = await fetch('http://localhost:5001/posts', {
+    method: 'POST',
+    body: JSON.stringify({ id: uuidv4(), text, isCompleted: false }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return await response.json();
+});
+
+export const completeTodo = createAsyncThunk<Todo, { id: string; isCompleted: boolean }>(
+  'todos/toggleTodoCompletion',
+  async ({ id, isCompleted }) => {
+    const response = await fetch(`http://localhost:5001/posts/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ isCompleted: !isCompleted }),
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    const data = (await response.json()) as Todo;
 
-    dispatch(addTodo({ newTodo: data }));
-  } catch (error) {
-    console.error('Ошибка при добавлении задачи', error);
+    return await response.json();
   }
-};
+);
 
-export const completeTodo =
-  ({ id, isCompleted }: { id: string; isCompleted: boolean }) =>
-  async (dispatch: AppDispatch) => {
-    try {
-      const response = await fetch(`http://localhost:5001/posts/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ isCompleted: !isCompleted }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = (await response.json()) as Todo;
+export const deleteTodo = createAsyncThunk<Todo, string>('todos/deleteTodo', async id => {
+  const response = await fetch(`http://localhost:5001/posts/${id}`, {
+    method: 'DELETE',
+  });
 
-      dispatch(completeTodoAction({ completedTodo: data }));
-    } catch (error) {
-      console.error('Ошибка при обновлении задачи', error);
-    }
-  };
-
-export const deleteTodo = (id: string) => async (dispatch: AppDispatch) => {
-  try {
-    const response = await fetch(`http://localhost:5001/posts/${id}`, {
-      method: 'DELETE',
-    });
-    const data = (await response.json()) as Todo;
-
-    dispatch(deleteTodoAction({ deletedTodo: data }));
-  } catch (error) {
-    console.error('Ошибка при удалении задачи', error);
-  }
-};
+  return await response.json();
+});
