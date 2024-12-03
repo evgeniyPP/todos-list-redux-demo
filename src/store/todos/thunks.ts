@@ -2,13 +2,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type AppDispatch } from '..';
 import { Todo } from '../../models';
+import {
+  addTodo,
+  completeTodo as completeTodoAction,
+  deleteTodo as deleteTodoAction,
+  setTodos,
+} from './slice';
 
 export const readTodos = () => async (dispatch: AppDispatch) => {
   try {
     const response = await fetch('http://localhost:5001/posts');
     const data = (await response.json()) as Todo[];
 
-    dispatch({ type: 'SET_TODOS', payload: { todos: data } });
+    dispatch(setTodos({ todos: data }));
   } catch (error) {
     console.error('Ошибка при загрузке задач', error);
   }
@@ -25,7 +31,7 @@ export const createTodo = (text: string) => async (dispatch: AppDispatch) => {
     });
     const data = (await response.json()) as Todo;
 
-    dispatch({ type: 'ADD_TODO', payload: { newTodo: data } });
+    dispatch(addTodo({ newTodo: data }));
   } catch (error) {
     console.error('Ошибка при добавлении задачи', error);
   }
@@ -44,7 +50,7 @@ export const completeTodo =
       });
       const data = (await response.json()) as Todo;
 
-      dispatch({ type: 'COMPLETE_TODO', payload: { completedTodo: data } });
+      dispatch(completeTodoAction({ completedTodo: data }));
     } catch (error) {
       console.error('Ошибка при обновлении задачи', error);
     }
@@ -57,7 +63,7 @@ export const deleteTodo = (id: string) => async (dispatch: AppDispatch) => {
     });
     const data = (await response.json()) as Todo;
 
-    dispatch({ type: 'DELETE_TODO', payload: { deletedTodo: data } });
+    dispatch(deleteTodoAction({ deletedTodo: data }));
   } catch (error) {
     console.error('Ошибка при удалении задачи', error);
   }

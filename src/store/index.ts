@@ -1,19 +1,16 @@
-import { composeWithDevTools } from '@redux-devtools/extension';
+import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { applyMiddleware, combineReducers, legacy_createStore as createStore } from 'redux';
-import { thunk } from 'redux-thunk';
 
-import { todosReducer } from './todos/reducer';
+import todosReducer from './todos/slice';
 
-const rootReducer = combineReducers({
-  todos: todosReducer,
+export const store = configureStore({
+  reducer: {
+    todos: todosReducer,
+  },
 });
 
-export const store = createStore(rootReducer, {}, composeWithDevTools(applyMiddleware(thunk)));
-
-export type AppStore = typeof store;
-export type RootState = ReturnType<AppStore['getState']>;
-export type AppDispatch = AppStore['dispatch'];
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

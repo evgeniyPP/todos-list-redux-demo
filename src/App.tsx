@@ -7,7 +7,7 @@ import { cn } from './utils/cn';
 
 export function App() {
   const dispatch = useAppDispatch();
-  const todos = useAppSelector(state => state.todos);
+  const todos = useAppSelector(state => state.todos.todos);
 
   const [inputValue, setInputValue] = useState('');
 
