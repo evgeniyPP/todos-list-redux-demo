@@ -1,8 +1,27 @@
 {
+  "users": [
+    {
+      "id": "979a52f4-6ca5-4d7c-9d25-a2ab462df450",
+      "email": "mike@test.com",
+      "password": "$2a$10$hlfJq2vkUtmeOQF3FKuOUuZLUaLc3B0veLqpVX9rrPQA4BJTG79ge"
+    },
+    {
+      "id": "24042891-7121-46a5-b266-e1e2595237f2",
+      "email": "boris@test.com",
+      "password": "$2a$10$N5yBuiDpf3/oxvOGq1LzB.mF6FuulDjUzYNwRxPpvknGjtmY.T2FS"
+    }
+  ],
   "posts": [
     {
       "id": "2f81b69a-8a8c-4875-ba77-0f7f74918433",
+      "userId": "979a52f4-6ca5-4d7c-9d25-a2ab462df450",
       "text": "Купить хлеб",
+      "isCompleted": false
+    },
+    {
+      "id": "d85fb442-c143-459c-9b85-94a3ef291a55",
+      "userId": "24042891-7121-46a5-b266-e1e2595237f2",
+      "text": "Купить машину",
       "isCompleted": false
     }
   ]
