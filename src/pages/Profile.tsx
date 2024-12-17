@@ -1,25 +1,24 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
+import { type User } from '../models';
 import { useAppDispatch, useAppSelector } from '../store';
 import { updateUser } from '../store/user/thunks';
 
-export function Profile() {
-  const user = useAppSelector(state => state.user.user);
+type Props = {
+  user: User;
+};
+
+export function Profile({ user }: Props) {
   const userError = useAppSelector(state => state.user.error);
 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!user) {
-      return;
-    }
 
     const formData = new FormData(e.currentTarget);
     const values = Object.fromEntries(formData) as {
@@ -48,19 +47,6 @@ export function Profile() {
     setMessage('Успешно сохранено!');
     setError('');
   };
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">

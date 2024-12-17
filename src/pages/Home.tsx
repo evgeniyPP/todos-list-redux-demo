@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
 import { CheckIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
+import { type User } from '../models';
 import { useAppDispatch, useAppSelector } from '../store';
 import { completeTodo, createTodo, deleteTodo, readTodos } from '../store/todos/thunks';
 import { logout } from '../store/user/slice';
 import { cn } from '../utils/cn';
 
-export function Home() {
+type Props = {
+  user: User;
+};
+
+export function Home({ user }: Props) {
   const dispatch = useAppDispatch();
   const todos = useAppSelector(state => state.todos.todos);
-  const user = useAppSelector(state => state.user.user);
-
-  const navigate = useNavigate();
 
   const [inputValue, setInputValue] = useState('');
 
@@ -38,14 +40,9 @@ export function Home() {
   };
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
     dispatch(readTodos({ userId: user.id }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-100 p-4">
