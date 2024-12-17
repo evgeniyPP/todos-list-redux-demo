@@ -3,7 +3,7 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import { type User } from '../../models';
-import { login } from './thunks';
+import { login, updateUser } from './thunks';
 
 export type UserState = {
   user: User | null;
@@ -31,6 +31,13 @@ export const userSlice = createSlice({
       })
       .addCase(login.rejected, (state, { error }) => {
         state.user = null;
+        state.error = error.message ?? 'Что-то пошло не так';
+      })
+      .addCase(updateUser.fulfilled, (state, { payload }) => {
+        state.user = payload;
+        state.error = '';
+      })
+      .addCase(updateUser.rejected, (state, { error }) => {
         state.error = error.message ?? 'Что-то пошло не так';
       });
   },

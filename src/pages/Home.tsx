@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CheckIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../store';
 import { completeTodo, createTodo, deleteTodo, readTodos } from '../store/todos/thunks';
@@ -49,10 +49,16 @@ export function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-100 p-4">
-      <header className="flex items-center justify-end p-4">
+      <header className="flex items-center justify-end gap-2 p-4">
+        <Link
+          to="/profile"
+          className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+        >
+          Профиль
+        </Link>
         <button
           onClick={handleLogout}
-          className="rounded-lg bg-gray-500 px-4 py-2 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          className="rounded-lg bg-gray-500 px-4 py-2 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
         >
           Выйти
         </button>
