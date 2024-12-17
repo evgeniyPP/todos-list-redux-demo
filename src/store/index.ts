@@ -10,6 +10,7 @@ export const store = configureStore({
     todos: todosReducer,
     user: userReducer,
   },
+  middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 export const persistor = persistStore(store);
