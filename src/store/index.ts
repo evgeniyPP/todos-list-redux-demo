@@ -1,13 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-import { todoApi } from './todos';
+import todosReducer from './todos/slice';
 
 export const store = configureStore({
   reducer: {
-    [todoApi.reducerPath]: todoApi.reducer,
+    todos: todosReducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(todoApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
