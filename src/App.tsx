@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
 
 import { useAppDispatch, useAppSelector } from './store';
+import { completeTodo, createTodo, deleteTodo, readTodos } from './store/todos/thunks';
 import { cn } from './utils/cn';
 
 export function App() {
@@ -10,21 +11,25 @@ export function App() {
 
   const [inputValue, setInputValue] = useState('');
 
+  useEffect(() => {
+    dispatch(readTodos());
+  }, [dispatch]);
+
   const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!inputValue.trim()) return;
 
-    dispatch({ type: 'ADD_TODO', newText: inputValue });
+    dispatch(createTodo(inputValue));
     setInputValue('');
   };
 
-  const handleComplete = (id: string) => {
-    dispatch({ type: 'COMPLETE_TODO', id });
+  const handleComplete = (id: string, isCompleted: boolean) => {
+    dispatch(completeTodo(id, isCompleted));
   };
 
   const handleDelete = (id: string) => {
-    dispatch({ type: 'DELETE_TODO', id });
+    dispatch(deleteTodo(id));
   };
 
   return (
@@ -62,7 +67,7 @@ export function App() {
               </span>
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => handleComplete(todo.id)}
+                  onClick={() => handleComplete(todo.id, todo.isCompleted)}
                   className={cn(
                     'rounded-full bg-green-500 p-2 text-white hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300',
                     { 'bg-green-300 hover:bg-green-400 focus:ring-green-200': todo.isCompleted }

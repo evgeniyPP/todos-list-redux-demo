@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import { type Todo } from '../../models';
 import { type TodoActionTypes } from './actions';
 
@@ -13,24 +11,28 @@ const initialState: State = {
 
 export function todosReducer(state = initialState, action: TodoActionTypes): State {
   switch (action.type) {
+    case 'SET_TODOS':
+      return {
+        ...state,
+        todos: action.todos,
+      };
+
     case 'ADD_TODO':
       return {
         ...state,
-        todos: [...state.todos, { id: uuidv4(), text: action.newText, isCompleted: false }],
+        todos: [...state.todos, action.todo],
       };
 
     case 'COMPLETE_TODO':
       return {
         ...state,
-        todos: state.todos.map(todo =>
-          todo.id === action.id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-        ),
+        todos: state.todos.map(todo => (todo.id === action.todo.id ? action.todo : todo)),
       };
 
     case 'DELETE_TODO':
       return {
         ...state,
-        todos: state.todos.filter(todo => todo.id !== action.id),
+        todos: state.todos.filter(todo => todo.id !== action.todo.id),
       };
 
     default:
