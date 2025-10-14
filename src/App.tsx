@@ -25,7 +25,7 @@ export function App() {
   };
 
   const handleComplete = (id: string, isCompleted: boolean) => {
-    dispatch(completeTodo(id, isCompleted));
+    dispatch(completeTodo({ id, isCompleted }));
   };
 
   const handleDelete = (id: string) => {
