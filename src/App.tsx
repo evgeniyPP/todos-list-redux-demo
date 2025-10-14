@@ -12,7 +12,13 @@ export function App() {
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
-    dispatch(readTodos());
+    const controller = new AbortController();
+
+    dispatch(readTodos(undefined, { signal: controller.signal }));
+
+    return () => {
+      controller.abort();
+    };
   }, [dispatch]);
 
   const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
