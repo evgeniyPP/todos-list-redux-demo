@@ -3,15 +3,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type Todo } from '../../models';
 
-export const readTodos = createAsyncThunk<Todo[]>('todos/readTodos', async (_, thunkAPI) => {
-  try {
-    const response = await fetch('http://localhost:5001/posts');
+export const readTodos = createAsyncThunk<Todo[], { userId: string }>(
+  'todos/readTodos',
+  async params => {
+    const url = new URL('/posts', 'http://localhost:5001');
+    Object.entries(params).forEach(([name, value]) => {
+      url.searchParams.set(name, value);
+    });
+
+    const response = await fetch(url);
 
     return await response.json();
-  } catch {
-    return thunkAPI.rejectWithValue('Ошибка при загрузке задач');
   }
-});
+);
 
 export const createTodo = createAsyncThunk<Todo, string>(
   'todos/createTodo',
