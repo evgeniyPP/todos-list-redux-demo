@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { compareSync } from 'bcryptjs';
+import { compareSync, hashSync } from 'bcryptjs';
 
 import { type User } from '../../models';
 
@@ -22,3 +22,28 @@ export const login = createAsyncThunk<User, { email: string; password: string }>
     return user;
   }
 );
+
+export const updateUser = createAsyncThunk<
+  User,
+  {
+    id: string;
+    newEmail: string;
+    newPassword?: string;
+  }
+>('user/update', async ({ id, newEmail, newPassword }) => {
+  const user = (await fetch(`http://localhost:5001/users/${id}`).then(res => res.json())) as User;
+  if (!user) {
+    throw new Error('Неверные данные');
+  }
+
+  const response = await fetch(`http://localhost:5001/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      id: user.id,
+      email: newEmail,
+      password: newPassword ? hashSync(newPassword, 10) : user.password,
+    }),
+  });
+
+  return (await response.json()) as User;
+});
