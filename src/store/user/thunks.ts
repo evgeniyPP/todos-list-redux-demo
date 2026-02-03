@@ -43,6 +43,9 @@ export const updateUser = createAsyncThunk<
       email: newEmail,
       password: newPassword ? hashSync(newPassword, 10) : user.password,
     }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 
   return (await response.json()) as User;
